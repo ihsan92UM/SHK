@@ -1,0 +1,231 @@
+# Datalog2 Python-USB using stdatalog-PySDK firmware
+
+## Requirements
+
+#### Hardware
+* SensorTileBox.Pro
+    * [FP-SNS-DATALOG2](https://github.com/STMicroelectronics/fp-sns-datalog2)
+#### Software
+* Python 3.12
+* [stdatalog-PySDK v1.1.0](https://github.com/STMicroelectronics/stdatalog-pysdk)
+
+
+# Getting Started
+Once [stdatalog-PySDK v1.1.0](https://github.com/STMicroelectronics/stdatalog-pysdk) is installed in the system the complete folder structure will look like below:
+```
+stdatalog_pysdk_v1.1.0/
+├── .github
+├── .venv
+├── .
+├── .
+├── .
+├── stdatalog_core
+├── stdatalog_dtk
+└── stdatalog_examples/
+    ├── .github
+    ├── .
+    ├── acquisition_examples
+    ├── cli_applictions
+    ├── dtk_plugins
+    ├── function_tests/
+    │   ├── stdatalog_API_examples_HSDatalog.py
+    │   └── stdatalog_API_examples_HSDLink.py
+    ├── gui_applications
+    ├── how-to_notebooks
+    ├── .
+    ├── .
+    ├── .
+    └── .
+```
+Connect the **SensorTileBox.Pro** with Computer using **USB** interface. Now run the `stdatalog_API_examples_HSDatalog.py` programme by navigating to the `function_tests` using `cd` command. For example :
+
+```C:\Users\xyz\xyz\stdatalog-pysdk_v1.1.0\stdatalog_examples\function_tests```
+
+This is a example programme provided by ST Microelectronics, once it RUNS properly we can confirm our installation of the SDK and later create a sample programme based on this.
+
+## Custom PnPL Message 
+
+FP-SNS-DATALOG2 software is controlled by JSON like PnPL commands. 
+Below are some examples of the Commands :
+
+* To enable a sensor `stts22h`
+```
+{"stts22h_temp": {"enable": true}}
+```
+* To start the `logger`
+```
+{"log_controller*start_log": {"interface": 1}}
+```
+* To end the `logger`
+```
+{"log_controller*stop_log": {"interface": 1}}
+```
+> :memo: **Note:** Interface enum 0 = SD Card,
+> Interface enum 1 = USB and,
+> Interface enum 2 = BLE
+
+## Python Code
+
+Make a new `PnPL_Command_Send_USB.py`  under `function_tests` folder and it contains all the imports from `stdatalog_API_examples_HSDLink.py` , this python file contains the custom PnPL message with `hsd_link.send_command()` , this is necessary to use **send command** as it is similar to the BLE send comamnd to UUID. The `stdatalog_API_examples_HSDLink.py` file doesn't use  `hsd_link.send_command()` to start and stop the log using PnPL messages.
+```
+#!/usr/bin/env python
+# coding: utf-8
+# *****************************************************************************
+#  * @file    PnPL_Command_Send_USB.py
+#  * @author  SRA ( all imports ) - Ihsan
+#  * @version 1.0.0
+#  * @date    23-May-2025
+# *****************************************************************************
+# All imports are copied from stdatalog_API_examples_HSDLink.py code
+
+
+
+import sys
+import os
+
+# Add the STDatalog SDK root directory to the sys.path to access the SDK packages
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
+
+import time
+from threading import Event
+from stdatalog_core.HSD_link.HSDLink import HSDLink, SensorAcquisitionThread
+from stdatalog_pnpl.PnPLCmd import PnPLCMDManager
+
+
+def main():
+
+    # change the "path/to/your/acquisition_folder" with the path in which the acquisition folder will be saved
+    acquisition_folder = "C:/Users/xyz/xyz/xyz/acquisition_folder"
+
+    # Create an instance of HSDLink
+    hsd_link = HSDLink()
+
+    # Create the appropriate HSDLink instance based on the connected board
+    hsd_link_instance = hsd_link.create_hsd_link(dev_com_type='st_hsd', acquisition_folder=acquisition_folder)
+
+    if hsd_link is None:
+        print("No compatible devices connected.")
+        return
+
+    # Get the version of the HSDLink instance
+    version = hsd_link.get_version(hsd_link_instance)
+    print(f"HSDLink Version: {version}")
+    if version != "High Speed Datalog DLL v2":
+        print("this is a test script for DATALOG2. Wrong FW detected.")
+        quit()
+
+    print("\n \n")
+
+    # Get the list of connected devices
+    devices = hsd_link.get_devices(hsd_link_instance)
+    #print(f"Connected Devices: {devices}")
+
+    if not devices:
+        print("No devices found.")
+        return
+
+    # Use the first connected device for demonstration
+    device_id = 0
+
+    print("\n \n")
+
+    print("\n Manually setting up temperature sensor \n")
+
+    # Set properties
+    # Disable all other sensor
+    message = "{\"lis2du12_acc\":{\"enable\":false}}"
+    #message = PnPLCMDManager.create_set_property_cmd("stts22h_temp", "enable", False)
+    print(hsd_link.send_command(hsd_link_instance, device_id, message))
+
+    message = "{\"lis2mdl_mag\":{\"enable\":false}}"
+    #message = PnPLCMDManager.create_set_property_cmd("stts22h_temp", "enable", False)
+    print(hsd_link.send_command(hsd_link_instance, device_id, message))
+
+    message = "{\"lps22df_press\":{\"enable\":false}}"
+    #message = PnPLCMDManager.create_set_property_cmd("stts22h_temp", "enable", False)
+    print(hsd_link.send_command(hsd_link_instance, device_id, message))
+
+    message = "{\"mp23db01hp_mic\":{\"enable\":false}}"
+    #message = PnPLCMDManager.create_set_property_cmd("stts22h_temp", "enable", False)
+    print(hsd_link.send_command(hsd_link_instance, device_id, message))
+
+    message = "{\"lsm6dsv16x_acc\":{\"enable\":false}}"
+    #message = PnPLCMDManager.create_set_property_cmd("stts22h_temp", "enable", False)
+    print(hsd_link.send_command(hsd_link_instance, device_id, message))
+
+    message = "{\"lsm6dsv16x_gyro\":{\"enable\":false}}"
+    #message = PnPLCMDManager.create_set_property_cmd("stts22h_temp", "enable", False)
+    print(hsd_link.send_command(hsd_link_instance, device_id, message))
+
+    message = "{\"lsm6dsv16x_mlc\":{\"enable\":false}}"
+    #message = PnPLCMDManager.create_set_property_cmd("stts22h_temp", "enable", False)
+    print(hsd_link.send_command(hsd_link_instance, device_id, message))
+
+    print("\n########### Setting Up Log Controllers time ############\n")
+
+
+    message = "{\"stts22h_temp\":{\"enable\":true, \"odr\":1}}"
+    print(PnPLCMDManager.create_set_property_cmd("stts22h_temp", "enable", True ))
+    print(hsd_link.send_command(hsd_link_instance, device_id, message))
+
+    # print(PnPLCMDManager.create_command_cmd("log_controller", "start_log", "interface", 1))
+    # message = PnPLCMDManager.create_command_cmd("log_controller", "start_log", "interface", 1)
+    # print(hsd_link.send_command(hsd_link_instance, device_id, message))
+    #
+    # time.sleep(10)
+    #
+    # print(PnPLCMDManager.create_command_cmd("log_controller", "stop_log", "interface", 1))
+    # message = PnPLCMDManager.create_command_cmd("log_controller", "stop_log", "interface", 1)
+    # print(hsd_link.send_command(hsd_link_instance, device_id, message))
+
+
+
+    message = "{\"log_controller*start_log\": {\"interface\": 1}}"
+    print(hsd_link.send_command(hsd_link_instance, device_id, message))
+
+    time.sleep(10)
+
+
+    message = "{\"log_controller*stop_log\": {\"interface\": 1}}"
+    print(hsd_link.send_command(hsd_link_instance, device_id, message))
+
+
+
+
+    print("\n---> End of HSDLink APIs test script.")
+
+
+if __name__ == "__main__":
+    main()
+
+```
+
+## Typical output
+
+```
+2025-07-01 13:10:03,796 - HSDatalogApp.stdatalog_core.HSD_link.communication.PnPL_HSD.hsd_dll - INFO - Platform Architecture: 64bit
+2025-07-01 13:10:04,258 - HSDatalogApp.stdatalog_core.HSD_link.HSDLink - INFO - Commmunication Opened correctly
+HSDLink Version: High Speed Datalog DLL v2
+
+{"stts22h_temp": {"enable": true}}
+2025-07-01 13:10:04,853 - HSDatalogApp.stdatalog_core.HSD_link.communication.PnPL_HSD.hsd_dll - INFO - PnPL Response: {"PnPL_Response":{"message":"","value":true,"status":true}}
+{"PnPL_Response":{"message":"","value":true,"status":true}}
+{"log_controller*start_log": {"interface": 0}}
+Command sent successfully!
+{"log_controller*stop_log": {"interface": 0}}
+2025-07-01 13:10:09,236 - HSDatalogApp.stdatalog_core.HSD_link.communication.PnPL_HSD.hsd_dll - INFO - PnPL Response: {"PnPL_Response":{"message":"","value":true,"status":true}}
+{"PnPL_Response":{"message":"","value":true,"status":true}}
+
+
+---> End of HSDLink APIs test script.
+
+```
+>> Change between interface 0 and 1 to save into SD card using USB or USB stream.
+>>> Logged file is saved into SD card.
+
+# Continuation to the BLE implementation
+The same procedure applies to the BLE UUID send command. 
+>> **Note:** Interface enum 2 has to be implemented for BLE write command to work.
+
+
+
