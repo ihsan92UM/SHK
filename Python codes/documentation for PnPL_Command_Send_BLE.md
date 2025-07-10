@@ -1,4 +1,4 @@
-# Datalog2 Python Code
+# Datalog2 Python-BLE Application
 
 ## Requirements
 
