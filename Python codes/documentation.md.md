@@ -13,7 +13,8 @@
 
 # Getting Started
 ## Graphical Overview
-![Datalog2 Overview](./Graphics/datalog2.png)
+![Datalog2 Overview](../Graphics/datalog2.png)
+
 
 ## BLE Characteristics
 After turning ON the SensorTileBox.Pro , it advertises with the name `HSD2v30` and exposes below characteristics with writable and readable GATT.
