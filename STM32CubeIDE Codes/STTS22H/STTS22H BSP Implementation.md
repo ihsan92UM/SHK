@@ -776,4 +776,4 @@ Below some know parts not utilized:
 Interrupt handler GPDMA5 is deleted because of compilation error. 
 
 # Current output
-![Output of STTS22H](../Graphics/STTS22H.png)
+![Output of STTS22H](../../Graphics/STTS22H.png)
