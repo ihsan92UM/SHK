@@ -10,7 +10,7 @@
 
 
 # Getting Started
-Download the [FP-SNS-STBOX1](https://github.com/STMicroelectronics/fp-sns-stbox1) in a favorable folder, i.e., in STMCube repository. This Function pack can also be installed from the STM32Cube IDE; for that goto ```help > Configuration tools > Manage embedded software packages``` and search for this function pack. Once installed it can be found under ```/STM32Cube/Repository/Packs/STMicroelectronics```. After this create a simple project as usual using STM32CubeMX with only neccessary pheripheral needed, if not later extra pheripherals has to be deleted to avoid code congestion and errors. This would be at the begging of the setup.
+Download the [FP-SNS-STBOX1](https://github.com/STMicroelectronics/fp-sns-stbox1) in a favorable folder, i.e., in STMCube repository. This Function pack can also be installed from the STM32Cube IDE; for that goto ```help > Configuration tools > Manage embedded software packages``` and search for this function pack. Once installed it can be found under ```/STM32Cube/Repository/Packs/STMicroelectronics```. After this create a simple project as usual using STM32CubeMX with only neccessary pheripheral needed, if not later extra pheripherals has to be deleted to avoid code congestion and errors. This would be at the beginning of the setup.
 ```
 Project Explorer
 └── STTS22H
