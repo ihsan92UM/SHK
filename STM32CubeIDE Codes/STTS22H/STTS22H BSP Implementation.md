@@ -4,9 +4,9 @@
 
 #### Hardware
 * SensorTileBox.Pro
-    * [FP-SNS-STBOX1](https://github.com/STMicroelectronics/fp-sns-stbox1)
 #### Software
 * STM32CubeIDE 1.19.0
+  * [FP-SNS-STBOX1](https://github.com/STMicroelectronics/fp-sns-stbox1)
 
 
 # Getting Started
